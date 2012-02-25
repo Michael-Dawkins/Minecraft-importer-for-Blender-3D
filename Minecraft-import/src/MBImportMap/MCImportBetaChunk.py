@@ -1,10 +1,9 @@
 ## Representation d'un chunk.
-import MCImportMatrix
-import MCImportNBT
-from MBImportMap import MCImportChunk
-from MCImportBlock import MCImportBlockBetaCollection
+from MCImportNBT import *
+from MBImportMap.MCImportChunk import MCImportChunk
+from MCImportBlocks.MCImportBlockBetaCollection import MCImportBlockBetaCollection
 
-class MCImportBetaMapChunk(MCImportChunk.MCImportChunk):
+class MCImportBetaMapChunk(MCImportChunk):
     ##Contient un tableau de byte contenant les informations du chunk
     chunkDataStruct = None
     ##Structure NBT du chunk (TagCompound)
@@ -21,7 +20,7 @@ class MCImportBetaMapChunk(MCImportChunk.MCImportChunk):
     
     def importChunkData(self, data):
         self.chunkDataStruct = data
-        self.chunkTagCompound = MCImportNBT.MCImportNBTTagCompound()
+        self.chunkTagCompound = MCImportNBTTagCompound()
         if (self.chunkTagCompound.fromBytes(data) == False):
             return False
         #Il s'agit d'un patch dans le cas ou Level n'est pas la racine de la structure
@@ -47,7 +46,7 @@ class MCImportBetaMapChunk(MCImportChunk.MCImportChunk):
             return None
         block = blocks[0]
         data = datas[0]
-        collection = MCImportBlockBetaCollection.MCImportBlockBetaCollection.fromBetaChunk(block.tagData, data.tagData)
+        collection = MCImportBlockBetaCollection.fromBetaChunk(block.tagData, data.tagData)
         return collection
     
     def setRegionCoord(self,x,z):

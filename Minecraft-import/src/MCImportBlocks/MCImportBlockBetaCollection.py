@@ -31,13 +31,14 @@ class MCImportBlockBetaCollection(MCImportBlockCollection):
         return collection
     
     def getBlock(self,x,y,z):
-        pos = x << 16 + z << 8 + y #Offset de l'id du bloc dans le tableau
+        pos = x * 16 * 128 + z * 128 + y #Offset de l'id du bloc dans le tableau
         dpos = pos >> 1 #Offset des metadata du bloc
         s = pos & 1 #4 bit superieur ou inferieur
         
         #Creation du bloc
         block = MCImportBlock()
-        block.setId(self.blockIds[pos])
+        blockID = self.blockIds[pos]
+        block.setId(blockID)
         #Preparation des metadata
         if(s == 0):
             block.setData(self.blockDatas[dpos] & 0x0F)

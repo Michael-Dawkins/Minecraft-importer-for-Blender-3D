@@ -110,7 +110,7 @@ class MCImportBetaRegion(MCImportRegion):
         if(self.isOpen == False):
             return None
         offset = self.coordToOffset(x, z)
-        print(offset)
+
         #On lit les information disponibles sur le trunk, comme sa taille et son offset dans le fichier
         self.fileStream.seek(offset[0])
         
