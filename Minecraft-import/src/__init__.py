@@ -1,8 +1,11 @@
+import sys
+sys.path.append(r'mcimport')
+
 import bpy
 from bpy_extras.io_utils import (ImportHelper)
 import bpy.utils
 from bpy.props import ( StringProperty, BoolProperty, IntProperty, EnumProperty )
-import MCImportBetaMap
+from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
 
 bl_info = {
     "name": "Minecraft Chunk Format",
@@ -28,10 +31,10 @@ class MCImport(bpy.types.Operator, ImportHelper):
     
     #On surcharge les proprietes de l'ImportHelper pour le configurer
     ##Extension des fichiers supportes par l'importeur
-    filename_ext = ".mcr"
+    filename_ext = ".mca"
     ##Filtre pour le'explorateur de fichier
     filter_glob = StringProperty( 
-            default="*.mcr",
+            default="*.mca",
             options={'HIDDEN'},
             )
     
@@ -61,10 +64,10 @@ class MCImport(bpy.types.Operator, ImportHelper):
         chunkZ = keywords.get("z_chunk")
         
         #On lance l'algo d'importation depuis un fichier
-        mcImport = MCImportBetaMap.MCImportBetaMapFile()
+        mcImport = MCImportAnvilRegion()
         if(mcImport.openMCRegion(mcrpath)):
             mcCurrentChunk = mcImport.getChunk(chunkX, chunkZ)
-            print(mcCurrentChunk.getBlocks().getValue(0, 0, 0)) #TODO Message de Debug
+            print(mcCurrentChunk.getBlocks().getBlock(10, 64, 8)) #TODO Message de Debug
         else:
             return {'CANCELLED'}
         return {'FINISHED'}

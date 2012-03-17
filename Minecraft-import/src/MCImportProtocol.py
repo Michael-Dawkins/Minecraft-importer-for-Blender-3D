@@ -2,8 +2,7 @@ import socket
 import threading
 from struct import (pack_into, unpack_from)
 
-VERSION_1_8 = 17
-VERSION_1_9_PRE4 = 20
+VERSION_1_2 = 28
 
 def toString16(buffer, offset, str):
     l = len(str)
@@ -16,7 +15,7 @@ def toString16(buffer, offset, str):
 class MCImportProtocol(object):    
     _proto_connection = None
     _proto_username = "JeanKevin"
-    _proto_version = VERSION_1_8
+    _proto_version = VERSION_1_2
     
     def __init__(self):
         return
@@ -27,10 +26,10 @@ class MCImportProtocol(object):
     
     def setVersion(self,version):
         #On limite l'utilisation sur les serveurs 1.8 et 1.9
-        if(version > 16 and version < 21):
+        if(version > 28):
             self._proto_version = version
         else:
-            self._proto_version = VERSION_1_8
+            self._proto_version = VERSION_1_2
         return self._proto_version
     
     def etablishCommunicationWith(self,serverAddr):
@@ -165,10 +164,28 @@ class MCImportProtocolHandshake(MCImportProtocolPacket):
         if not self._handshake_return[0] == "-":
             return False
         return False
-    
+
+SERVER_MODE_SURVIVAL = 0
+SERVER_MODE_CREATIVE = 1
+PLAYER_DIMENSION_OVERWORLD = 0
+PLAYER_DIMENSION_NETHER = -1
+PLAYER_DIMENSION_END = 1
+SERVER_DIFFICULTY_PEACEFULL = 0
+SERVER_DIFFICULTY_EASY = 1
+SERVER_DIFFICULTY_NORMAL = 2
+SERVER_DIFFICULTY_HARD = 3
+
 class MCImportProtocolLogin(MCImportProtocolPacket):
     _login_username = ""
-    _login_mcversion = VERSION_1_8
+    _login_mcversion = VERSION_1_2
+    
+    _server_player_entityId = 0
+    _server_levelType = ""
+    _server_mode = 0
+    _server_dimension = 0
+    _server_difficulty = 0
+    _server_worldHeight = 0
+    _server_maxPlayer = 0
     
     def __init__(self):
         self._packet_id = LOGIN_PACKET
@@ -200,7 +217,7 @@ class MCImportProtocolLogin(MCImportProtocolPacket):
         if v > 16 and v < 21:
             self._login_mcversion = v
         else:
-            self._login_mcversion = VERSION_1_8
+            self._login_mcversion = VERSION_1_2
         return self._login_mcversion
     
 class MCImportProtocolPreChunk(MCImportProtocolPacket):
