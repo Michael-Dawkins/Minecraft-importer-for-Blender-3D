@@ -1,10 +1,10 @@
 import sys
-sys.path.append(r'mcimport')
+sys.path.append(r'/Applications/Blender/blender.app/Contents/MacOs/2.60/scripts/addons/mcimport')
 
 import bpy
 from bpy_extras.io_utils import (ImportHelper)
 import bpy.utils
-from bpy.props import ( StringProperty, BoolProperty, IntProperty, EnumProperty )
+from bpy.props import (StringProperty, BoolProperty, IntProperty, EnumProperty)
 from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
 
 bl_info = {
@@ -14,7 +14,7 @@ bl_info = {
     "blender": (2, 5, 7),
     "api": 35622,
     "location": "File > Import-Export",
-    "description": ("Import Minecraft Chunk from Region File (*.mcr)"),
+    "description": ("Import Minecraft Chunk from Region File (*.mca)"),
     "warning": "",
     "wiki_url": "",
     "tracker_url": "http://bug.cvlaminck.fr",
@@ -105,7 +105,7 @@ class MCImport(bpy.types.Operator, ImportHelper):
         
 ##Fonction permettant l'enregistrement de notre operateur dans le menu Import
 def mcimport_menu_item(self,context):
-    self.layout.operator(MCImport.bl_idname,"Minecraft (*.mcr)")
+    self.layout.operator(MCImport.bl_idname,"Minecraft (*.mca)")
 
 ##Enregistre notre operateur dans Blender
 def register():
