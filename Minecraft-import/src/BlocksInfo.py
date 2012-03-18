@@ -1,5 +1,5 @@
 import bpy
-import bmesh
+#import bmesh
 import os
 from xml.dom.minidom import parse, parseString
 import time
@@ -63,7 +63,13 @@ def TextureDirtBlock(blocksInfo):
     cubeMesh = bpy.context.selected_objects[0].data
     if not cubeMesh.uv_textures:
         cubeMesh.uv_textures.new()
-    meshUVLoops = cubeMesh.uv_loop_layers[0].data
+    #meshUVLoops = cubeMesh.uv_loop_layers[0].data
+    #has_uv = (len(cubeMesh.tessface_uv_textures) > 0)
+    
+    has_uv = (len(cubeMesh.uv_textures) > 0)
+    if not has_uv :
+        cubeMesh.uv_textures.new()
+    
     cubeFaces = dict()
     faceNorth = list()
     faceSouth = list()
@@ -71,39 +77,37 @@ def TextureDirtBlock(blocksInfo):
     faceWest = list()
     faceTop = list()
     faceBottom = list()
-    
-    uvs = bpy.context.selected_objects[0].data.uv_loop_layers[0].data
-
+    uvText = cubeMesh.uv_textures.active.data
     #west
-    faceWest.append(meshUVLoops[18].uv)
-    faceWest.append(meshUVLoops[17].uv)
-    faceWest.append(meshUVLoops[16].uv)
-    faceWest.append(meshUVLoops[19].uv)
+    faceWest.append(uvText[4].uv3)
+    faceWest.append(uvText[4].uv2)
+    faceWest.append(uvText[4].uv1)
+    faceWest.append(uvText[4].uv4)
     #bottom
-    faceBottom.append(meshUVLoops[2].uv)
-    faceBottom.append(meshUVLoops[1].uv)
-    faceBottom.append(meshUVLoops[0].uv)
-    faceBottom.append(meshUVLoops[3].uv)
+    faceBottom.append(uvText[0].uv4)
+    faceBottom.append(uvText[0].uv2)
+    faceBottom.append(uvText[0].uv1)
+    faceBottom.append(uvText[0].uv3)
     #top
-    faceTop.append(meshUVLoops[5].uv)
-    faceTop.append(meshUVLoops[4].uv)
-    faceTop.append(meshUVLoops[7].uv)
-    faceTop.append(meshUVLoops[6].uv)
+    faceTop.append(uvText[1].uv2)
+    faceTop.append(uvText[1].uv1)
+    faceTop.append(uvText[1].uv4)
+    faceTop.append(uvText[1].uv3)
     #east
-    faceEast.append(meshUVLoops[10].uv)
-    faceEast.append(meshUVLoops[9].uv)
-    faceEast.append(meshUVLoops[8].uv)
-    faceEast.append(meshUVLoops[11].uv)
+    faceEast.append(uvText[2].uv3)
+    faceEast.append(uvText[2].uv2)
+    faceEast.append(uvText[2].uv1)
+    faceEast.append(uvText[2].uv4)
     #north
-    faceNorth.append(meshUVLoops[20].uv)
-    faceNorth.append(meshUVLoops[23].uv)
-    faceNorth.append(meshUVLoops[22].uv)
-    faceNorth.append(meshUVLoops[21].uv)
+    faceNorth.append(uvText[5].uv1)
+    faceNorth.append(uvText[5].uv4)
+    faceNorth.append(uvText[5].uv3)
+    faceNorth.append(uvText[5].uv2)
     #south
-    faceSouth.append(meshUVLoops[14].uv)
-    faceSouth.append(meshUVLoops[13].uv)
-    faceSouth.append(meshUVLoops[12].uv)
-    faceSouth.append(meshUVLoops[15].uv)
+    faceSouth.append(uvText[3].uv3)
+    faceSouth.append(uvText[3].uv2)
+    faceSouth.append(uvText[3].uv1)
+    faceSouth.append(uvText[3].uv4)
     
     cubeFaces[0] = faceNorth
     cubeFaces[2] = faceSouth
@@ -112,7 +116,7 @@ def TextureDirtBlock(blocksInfo):
     cubeFaces[4] = faceTop
     cubeFaces[5] = faceBottom
     
-    id = 98
+    id = 1
     
     for key in cubeFaces:
         num = blocksInfo[str(id)][key]
@@ -121,26 +125,17 @@ def TextureDirtBlock(blocksInfo):
         print("row : " + str(row) + "  column : " + str(column))
         
         print(str(num))
-        cubeFaces[key][0] = [column / 16, 1 - (row / 16)]
-        print(cubeFaces[key][0])
-        cubeFaces[key][1] = [(column + 1) / 16, 1 - (row / 16)]
-        print(cubeFaces[key][1])
-        cubeFaces[key][2] = [(column + 1) / 16, 1 - ((row / 16 + (1 /16)))]
-        print(cubeFaces[key][2])
-        cubeFaces[key][3] = [column / 16, 1 - ((row / 16 + (1 /16)))]
-        print(cubeFaces[key][3])
-    
-    
-    #get a bmesh
-    #bm = bmesh.new()
-    #fill the bmesh with mesh data
-    #bm.from_mesh(cubeMesh)
-    #bm.to_mesh(cubeMesh)
-    
+        print(key)
+        cubeFaces[key][0][:] = [column / 16, 1 - (row / 16)]
+        uvText[0].uv1 = [0.5,0.5]
+        cubeFaces[key][1][:] = [(column + 1) / 16, 1 - (row / 16)]
+        cubeFaces[key][2][:] = [(column + 1) / 16, 1 - ((row / 16 + (1 /16)))]
+        cubeFaces[key][3][:] = [column / 16, 1 - ((row / 16 + (1 /16)))]
     
 if __name__ == "__main__" :
     time_start = time.time()
     clear()
+    bpy.ops.image.open(filepath=path_texture_pack)
     #create the blockInfo object automatically parses the file at the path given
     blocksInfo = BlocksInfo(path_xml)
     print(repr(blocksInfo))
