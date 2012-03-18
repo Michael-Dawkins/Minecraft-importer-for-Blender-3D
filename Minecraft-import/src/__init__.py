@@ -6,6 +6,7 @@ from bpy_extras.io_utils import (ImportHelper)
 import bpy.utils
 from bpy.props import ( StringProperty, BoolProperty, IntProperty, EnumProperty )
 from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
+import BlocksInfo
 
 bl_info = {
     "name": "Minecraft Chunk Format",

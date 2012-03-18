@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?> 
+<Blocks>
+	<Block ID ="1" Name="Dirt">
+		<Faces>
+			<F0>2</F0>
+			<F1>2</F1>
+			<F2>3</F2>
+			<F3>2</F3>
+			<F4>2</F4>
+			<F5>2</F5>
+		</Faces>
+	</Block>
+	<Block ID ="2" Name="Grass Block">
+		<Faces>
+			<F0>2</F0>
+			<F1>2</F1>
+			<F2>2</F2>
+			<F3>2</F3>
+			<F4>2</F4>
+			<F5>2</F5>
+		</Faces>
+	</Block>
+	<Block ID ="98" Name="Brick Stone">
+		<Faces>
+			<F0>54</F0>
+			<F1>54</F1>
+			<F2>54</F2>
+			<F3>54</F3>
+			<F4>54</F4>
+			<F5>54</F5>
+		</Faces>
+	</Block>
+</Blocks>
