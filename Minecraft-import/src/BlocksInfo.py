@@ -2,8 +2,6 @@ import bpy
 #import bmesh
 import os
 from xml.dom.minidom import parse, parseString
-import time
-clear = lambda: os.system('cls')
 
 path_texture_pack = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\terrain.png"
     
@@ -127,21 +125,7 @@ def TextureDirtBlock(blocksInfo):
         print(str(num))
         print(key)
         cubeFaces[key][0][:] = [column / 16, 1 - (row / 16)]
-        uvText[0].uv1 = [0.5,0.5]
         cubeFaces[key][1][:] = [(column + 1) / 16, 1 - (row / 16)]
         cubeFaces[key][2][:] = [(column + 1) / 16, 1 - ((row / 16 + (1 /16)))]
         cubeFaces[key][3][:] = [column / 16, 1 - ((row / 16 + (1 /16)))]
-    
-if __name__ == "__main__" :
-    time_start = time.time()
-    clear()
-    bpy.ops.image.open(filepath=path_texture_pack)
-    #create the blockInfo object automatically parses the file at the path given
-    blocksInfo = BlocksInfo(path_xml)
-    print(repr(blocksInfo))
-    TextureDirtBlock(blocksInfo)
-    
-    print("script execution finished in %.4f sec" % (time.time() - time_start))
-
-
     
