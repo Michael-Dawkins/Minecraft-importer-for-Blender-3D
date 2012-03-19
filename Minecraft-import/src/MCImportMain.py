@@ -1,5 +1,6 @@
 from MCImportMap.MCImportBetaRegion import MCImportBetaRegion
 from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
+from MCImportNetwork.MCImportServer import MCImportServer
 
 def main():
     #Code d'example pour utiliser un fichier de region minecraft 1.1
@@ -22,10 +23,9 @@ def main():
     #Par exemple affiche le bloc
     print("BlockId : " + str(block.getId()) + "\nData : " + str(block.getData()) + "\n")
     
-    #Code d'example pour utiliser le protocole reseau
-    #proto = MCImportProtocol.MCImportProtocol()
-    #proto.tryConnectionWith("192.168.1.157:25565")
-    #proto.etablishCommunicationWith("127.0.0.1:25565")
+    #Code d'example pour utiliser un serveur minecraft 1.2
+    server = MCImportServer("127.0.0.1",25565)
+    server.start()
     return {"FINISHED"} 
 
 main()
