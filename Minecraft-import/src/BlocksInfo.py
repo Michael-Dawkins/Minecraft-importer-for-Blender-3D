@@ -3,12 +3,6 @@ import bpy
 import os
 from xml.dom.minidom import parse, parseString
 
-path_texture_pack = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\terrain.png"
-    
-bpy.ops.image.open(filepath = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\terrain.png", relative_path=False)
-
-path_xml = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\blockscollection.xml"
-
 '''Class responsible for parsing and accessing parsed data (info about face texturing for a given block ID)'''
 class BlocksInfo:
     

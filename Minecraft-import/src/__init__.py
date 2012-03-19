@@ -7,6 +7,11 @@ import bpy.utils
 from bpy.props import (StringProperty, BoolProperty, IntProperty, EnumProperty)
 from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
 import BlocksInfo
+from WorldBuilder import WorldBuilder
+
+#global paths
+path_texture_pack = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\terrain.png"
+path_xml = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\blockscollection.xml"
 
 bl_info = {
     "name": "Minecraft Chunk Format",
