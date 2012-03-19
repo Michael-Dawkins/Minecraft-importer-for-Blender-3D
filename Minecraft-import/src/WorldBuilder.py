@@ -27,8 +27,8 @@ class WorldBuilder:
         xmatrix = 7
         ymatrix = 7
         zmatrix = 7
-        matrix = create_3n_matrix(xmatrix,ymatrix,zmatrix)
-        matrix2 = create_3n_matrix(xmatrix,ymatrix,zmatrix)
+        matrix = Create_3n_matrix(xmatrix,ymatrix,zmatrix)
+        matrix2 = Create_3n_matrix(xmatrix,ymatrix,zmatrix)
         
         #Creating materials
         for id in self.blocksInfo :
@@ -57,6 +57,9 @@ class WorldBuilder:
                         bpy.context.active_object.scale.z = 0.5
                         bpy.ops.object.transform_apply(scale = True)
             print(i)
+            
+    def Create_3n_matrix(self,x,y,z):
+        return [[[1 for n in range(x)] for n in range(y)] for n in range(z)]
         
     def __ImportTexturePack(self):
         self.image = load_image(imagepath = self.texturePackPath)
