@@ -25,3 +25,14 @@ local.properties
 
 # PDT-specific
 .buildpath
+
+#Python Compiled Files and folder#
+*.pyc
+__pycache__
+
+#Project Files#
+.pydevproject
+
+#Copyrighted Files#
+terrain.png
+
