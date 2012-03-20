@@ -2,6 +2,7 @@ import bpy
 import bpy.utils
 import os
 import sys
+from MCImportBlockInfo import *
 
 #Fix definitely the problem with the path for the packages
 script_path = bpy.utils.script_paths()
@@ -78,11 +79,18 @@ class MCImport(bpy.types.Operator, ImportHelper):
         chunkX = keywords.get("x_chunk")
         chunkZ = keywords.get("z_chunk")
         
+        #parsesxml and create collection with texture information for all blocks
+        xmlreader = MCImportBlockInfoCollectionXMLReader(path_xml)
+        blocksInfo = xmlreader.getBlockInfoCollection()
+        
         #On lance l'algo d'importation depuis un fichier
         mcImport = MCImportAnvilRegion()
         if(mcImport.openMCRegion(mcrpath)):
             mcCurrentChunk = mcImport.getChunk(chunkX, chunkZ)
-            print(mcCurrentChunk.getBlocks().getBlock(10, 64, 8)) #TODO Message de Debug
+            #blocks is a MCImportBlockAnvilCollection
+            blocks = mcCurrentChunk.getBlocks()
+            worldBuilder = WorldBuilder(blocksInfo , blocks, path_texture_pack)
+            worldBuilder.BuildWorld()
         else:
             return {'CANCELLED'}
         return {'FINISHED'}

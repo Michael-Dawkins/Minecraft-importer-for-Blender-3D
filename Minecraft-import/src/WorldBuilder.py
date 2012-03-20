@@ -4,7 +4,6 @@ from MCImportBlocks.MCImportBlockAnvilCollection import MCImportBlockAnvilCollec
 import time
 import os
 from bpy_extras.image_utils import load_image
-
 clear = lambda: os.system('cls')
 
 class WorldBuilder:
@@ -17,49 +16,44 @@ class WorldBuilder:
         
     def BuildWorld(self):
         time_start = time.time()
-        clear()
-        
         self.__BuildCubes()
-        
         print("World built in %.4f sec" % (time.time() - time_start))
         
     def __BuildCubes(self):
-        xmatrix = 7
-        ymatrix = 7
-        zmatrix = 7
-        matrix = self.Create_3n_matrix(xmatrix,ymatrix,zmatrix)
-        matrix2 = self.Create_3n_matrix(xmatrix,ymatrix,zmatrix)
-        
+        #make one cube of each that is present in blocks and duplicate it instead of creating a new one each time
+        xSize = 15
+        ySize = 255
+        zSize = 15
+        #TODO clone blocks in blocksCulled
+        blocksCulled = MCImportBlockAnvilCollection()
         #Creating materials
-        for id in self.blocksInfo :
-            #TODO : Not only IDs, also Types
-            self.blockMaterials[id] = self.__CreateBlockMaterial(BlockID = id)
+        #TODO : Not only IDs, also Types
+        for block in self.blocks:
+            mat = self.__CreateBlockMaterial(BlockID = block.getBlockId()) 
+            if mat is not None:
+                self.blockMaterials[block.getBlockId()] = mat
         
         #We strip out ocluded cubes
-        for i in range(1,xmatrix-1):
-            for j in range (1,ymatrix-1):
-                for k in range(1,zmatrix-1):
-                    if ((matrix[i-1][j][k] == 1) and (matrix[i+1][j][k] == 1) and (matrix[i][j-1][k] == 1) and (matrix[i][j+1][k] == 1) and (matrix[i][j][k-1] == 1) and (matrix[i][j][k+1] == 1)):
-                        matrix2[i][j][k]=0
+        for i in range(1,xSize-1):
+            for j in range (1,ySize-1):
+                for k in range(1,zSize-1):
+                    if ((blocks.getBlock(i -1, j, k).getId() != 0) and (blocks.getBlock(i + 1, j, k).getId() != 0):
+                        if (blocks.getBlock(i , j -1, k).getId() != 0) and (blocks.getBlock(i , j +1, k).getId() != 0) :
+                            if (blocks.getBlock(i, j, k -1).getId() != 0) and (blocks.getBlock(i, j, k +1).getId() != 0)):
+                                blocksCulled.getBlock(i,j,k).setID(0)
                         
         #cube generation (takes lot of time if more than 15*15*15)    
-        for i in range(0,xmatrix):
-            for j in range (0,ymatrix):
-                for k in range(0,zmatrix):
-                    if (matrix2[i][j][k] == 1):
+        for i in range(0,xSize):
+            for j in range (0,ySize):
+                for k in range(0,zSize):
+                    if (blocksCulled.getBlock(i,j,k).getId() != 0):
                         bpy.ops.mesh.primitive_plane_add(location = (i,j,k))
-                        #bpy.context.scene.cursor_location = bpy.context.active_object.location
-                        #bpy.context.scene.cursor_location.z -= 1
-                        #bpy.ops.object.origin_set(type='ORIGIN_CURSOR')
                         ##
                         bpy.context.active_object.scale.x = 0.5
                         bpy.context.active_object.scale.y = 0.5
                         bpy.context.active_object.scale.z = 0.5
                         bpy.ops.object.transform_apply(scale = True)
             print(i)
-            
-    def Create_3n_matrix(self,x,y,z):
-        return [[[1 for n in range(x)] for n in range(y)] for n in range(z)]
         
     def __ImportTexturePack(self):
         self.image = load_image(imagepath = self.texturePackPath)
@@ -70,9 +64,15 @@ class WorldBuilder:
     
     def __CreateBlockMaterial(self, BlockID, BlockType = None):
         if BlockType is not None:
-            material = bpy.data.materials.new(name='block' + str(BlockID) + str(BlockType))
+            if bpy.data.materials['block' + str(BlockID) + str(BlockType)] is None
+                material = bpy.data.materials.new(name='block' + str(BlockID) + str(BlockType))
+            else
+                return None
         else:
-            material = bpy.data.materials.new(name='block' + str(BlockID))
+            if bpy.data.materials['block' + str(BlockID)] is None
+                material = bpy.data.materials.new(name='block' + str(BlockID))
+            else
+                return None
         #bpy.ops.object.material_slot_remove()
         slot = material.texture_slots.add()
         slot.texture = self.texture
