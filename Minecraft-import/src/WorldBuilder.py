@@ -19,7 +19,7 @@ class WorldBuilder:
         time_start = time.time()
         clear()
         
-        __BuildCubes()
+        self.__BuildCubes()
         
         print("World built in %.4f sec" % (time.time() - time_start))
         
@@ -27,13 +27,13 @@ class WorldBuilder:
         xmatrix = 7
         ymatrix = 7
         zmatrix = 7
-        matrix = Create_3n_matrix(xmatrix,ymatrix,zmatrix)
-        matrix2 = Create_3n_matrix(xmatrix,ymatrix,zmatrix)
+        matrix = self.Create_3n_matrix(xmatrix,ymatrix,zmatrix)
+        matrix2 = self.Create_3n_matrix(xmatrix,ymatrix,zmatrix)
         
         #Creating materials
         for id in self.blocksInfo :
             #TODO : Not only IDs, also Types
-            self.blockMaterials[id] = __CreateBlockMaterial(BlockID = id)
+            self.blockMaterials[id] = self.__CreateBlockMaterial(BlockID = id)
         
         #We strip out ocluded cubes
         for i in range(1,xmatrix-1):

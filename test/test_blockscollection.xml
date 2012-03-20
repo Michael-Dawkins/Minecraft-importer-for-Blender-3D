@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Blocks>
+    
+    <Block id="1" name="Stone">
+    	<Faces>
+    		<F>1</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="2" name="Grass Block">
+    	<Faces>
+    		<F>2</F>
+    		<F4>19</F4>
+    		<F5>2</F5>
+    	</Faces>
+    </Block>
+    
+    <Block id="3" name="Dirt">
+    	<Faces>
+    		<F>2</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="4" name="Cobblestone">
+    	<Faces>
+    		<F>16</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="5" name="Wooden Plank">
+    	<Faces>
+    		<F>4</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="7" name="Bedrock">
+    	<Faces>
+    		<F>17</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="8" name="Water" class="Fluid"><!-- TODO -->
+    	<Faces>
+    		<F></F>
+    	</Faces>
+    </Block>
+    
+    <Block id="9" name="Stationary Water">
+    	<Faces>
+    		<F></F>
+    	</Faces>
+    </Block>
+    
+    <Block id="10" name="Lava" class="Fluid"><!-- TODO -->
+    	<Faces>
+    		<F></F>
+    	</Faces>
+    </Block>
+    
+    <Block id="11" name="Stationary Lava">
+    	<Faces>
+    		<F></F>
+    	</Faces>
+    </Block>
+    
+    <Block id="12" name="Sand">
+    	<Faces>
+    		<F>18</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="13" name="Gravel">
+    	<Faces>
+    		<F>0</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="14" name="Gold Ore">
+    	<Faces>
+    		<F>32</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="15" name="Iron Ore">
+    	<Faces>
+    		<F>33</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="16" name="Coal Ore">
+    	<Faces>
+    		<F>34</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="17" name="Wood"><!-- TODO -->
+    	<Faces>
+    		<F></F>
+    	</Faces>
+    </Block>
+    
+    <Block id="18" name="Leaves">
+    	<Faces>
+    		<F>52</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="21" name="Lapis Lazuli Ore">
+    	<Faces>
+    		<F>160</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="24" name="Sand Stone">
+    	<Faces>
+    		<F>192</F>
+    		<F4>176</F4>
+    		<F5>176</F5>
+    	</Faces>
+    </Block>
+    
+    <Block id="30" name="Cobweb" class="Sprite">
+    	<Faces>
+    		<F>11</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="31" name="Grass" class="Sprite">
+    	<Faces>
+    		<F>38</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="35" name="Wool">
+    	<Faces type="0" name="White Wool">
+    		<F>64</F>
+    	</Faces>
+    	<Faces type="1" name="Orange Wool">
+    		<F>210</F>
+    	</Faces>
+    	<Faces type="2" name="Magenta Wool">
+    		<F>194</F>
+    	</Faces>
+    	<Faces type="3" name="Light Blue Wool">
+    		<F>178</F>
+    	</Faces>
+    	<Faces type="4" name="Yellow Wool">
+    		<F>162</F>
+    	</Faces>
+    	<Faces type="5" name="Lime Wool">
+    		<F>146</F>
+    	</Faces>
+    	<Faces type="6" name="Pink Wool">
+    		<F>130</F>
+    	</Faces>
+    	<Faces type="7" name="Dark Gray Wool">
+    		<F>114</F>
+    	</Faces>
+    	<Faces type="8" name="Light Gray Wool">
+    		<F>225</F>
+    	</Faces>
+    	<Faces type="9" name="Cyan Wool">
+    		<F>209</F>
+    	</Faces>
+    	<Faces type="10" name="Purple Wool">
+    		<F>193</F>
+    	</Faces>
+    	<Faces type="11" name="Blue Wool">
+    		<F>177</F>
+    	</Faces>
+    	<Faces type="12" name="Brown Wool">
+    		<F>161</F>
+    	</Faces>
+    	<Faces type="13" name="Green Wool">
+    		<F>145</F>
+    	</Faces>
+    	<Faces type="14" name="Red Wool">
+    		<F>129</F>
+    	</Faces>
+    	<Faces type="15" name="Black Wool">
+    		<F>113</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="37" name="Dandelion" class="Sprite">
+    	<Faces>
+    		<F>12</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="38" name="Rose" class="Sprite">
+    	<Faces>
+    		<F>13</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="39" name="Brown Mushroom" class="Sprite">
+    	<Faces>
+    		<F>29</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="40" name="Red Mushroom" class="Sprite">
+    	<Faces>
+    		<F>28</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="44" name="Slabs">
+    	<Faces type="0">
+    		<F>5</F>
+    		<F4>6</F4>
+    		<F5>6</F5>
+    	</Faces>
+    	<Faces type="1">
+    		<F>192</F>
+    		<F4>176</F4>
+    		<F5>176</F5>
+    	</Faces>
+    	<Faces type="2">
+    		<F>4</F>
+    	</Faces>
+    	<Faces type="3">
+    		<F>16</F>
+    	</Faces>
+    	<Faces type="4">
+    		<F>7</F>
+    	</Faces>
+    	<Faces type="5">
+    		<F>54</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="47" name="Bookshelf">
+    	<Faces>
+    		<F>35</F>
+    		<F4>4</F4>
+    		<F5>4</F5>
+    	</Faces>
+    </Block>
+    
+    <Block id="49" name="Obsidian">
+    	<Faces>
+    		<F>37</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="56" name="Diamond Ore">
+    	<Faces>
+    		<F>50</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="73" name="Redstone Ore">
+    	<Faces>
+    		<F>51</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="78" name="Snow"><!-- TODO -->
+    	<Faces>
+    		<F></F>
+    	</Faces>
+    </Block>
+    
+    <Block id="79" name="Ice">
+    	<Faces>
+    		<F>67</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="81" name="Cactus">
+    	<Faces>
+    		<F>70</F>
+    		<F4>69</F4>
+    		<F5>69</F5>
+    	</Faces>
+    </Block>
+    
+    <Block id="82" name="Clay Block">
+    	<Faces>
+    		<F>72</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="83" name="Sugar Cane" class="Sprite"><!-- TODO -->
+    	<Faces>
+    		<F></F>
+    	</Faces>
+    </Block>
+    
+    <Block id="86" name="">
+    	<Faces>
+    		<F>118</F>
+    		<F0>119</F0>
+    		<F4>102</F4>
+    		<F5>102</F5>
+    	</Faces>
+    </Block>
+    
+    <Block id="98" name="BrickStone">
+        <Faces>
+            <F>54</F>
+        </Faces>
+    </Block>
+    
+    <Block id="99" name="Huge Brown Mushroom">
+    	<Faces>
+    		<F>126</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="100" name="Huge Red Mushroom">
+    	<Faces>
+    		<F>125</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="106" name="Vines" class="Vines">
+    	<Faces>
+    		<F>143</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="110" name="Mycelium">
+    	<Faces>
+    		<F>77</F>
+    		<F4>78</F4>
+    		<F5>2</F5>
+    	</Faces>
+    </Block>
+    
+    <Block id="111" name="Lily Pad" class="Lilypad">
+    	<Faces>
+    		<F>76</F>
+    	</Faces>
+    </Block>
+    
+    <Block id="120" name="End Portal Frame" class="Endportalframe">
+    	<Faces>
+    		<F>159</F>
+    		<F4>158</F4>
+    		<F5>175</F5>
+    	</Faces>
+    </Block>
+    
+</Blocks>

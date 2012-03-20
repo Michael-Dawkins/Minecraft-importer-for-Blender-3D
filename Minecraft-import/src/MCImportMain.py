@@ -1,8 +1,17 @@
 from MCImportMap.MCImportBetaRegion import MCImportBetaRegion
 from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
 from MCImportNetwork.MCImportServer import MCImportServer
+from MCImportBlocks import MCImportBlockCollection
+from MCImportBlockInfo import MCImportBlockInfoCollectionXMLReader
 
 def main():
+    #Code d'exemple pour le parseur XML
+    #TODO
+    xmlReader = MCImportBlockInfoCollectionXMLReader("/Volumes/Data/cyr62110/Documents/Python Projects/mcimport/test/test_blockscollection.xml")
+    blocks = xmlReader.getBlockInfoCollection()
+    for i in blocks:
+        print( str(blocks[i]) + "\n" )
+    
     #Code d'example pour utiliser un fichier de region minecraft 1.1
     map = MCImportBetaRegion()
     map.openMCRegion("/Volumes/Data/cyr62110/Documents/Python Projects/mcimport/test/r.-1.0.mcr")
