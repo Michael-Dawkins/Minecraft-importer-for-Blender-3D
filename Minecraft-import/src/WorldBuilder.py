@@ -1,6 +1,7 @@
 import bpy
 from BlocksInfo import BlocksInfo
 from MCImportBlocks.MCImportBlockAnvilCollection import MCImportBlockAnvilCollection
+from MCImportBlocks.MCImportBlock import MCImportBlock
 import time
 import os
 from bpy_extras.image_utils import load_image
@@ -16,6 +17,7 @@ class WorldBuilder:
         
     def BuildWorld(self):
         time_start = time.time()
+        self.__ImportTexturePack()
         self.__BuildCubes()
         print("World built in %.4f sec" % (time.time() - time_start))
         
@@ -24,29 +26,31 @@ class WorldBuilder:
         xSize = 15
         ySize = 255
         zSize = 15
-        #TODO clone blocks in blocksCulled
-        blocksCulled = MCImportBlockAnvilCollection()
+        #clone blocks in blocksCulled
+        blocksCulled = self.blocks.copy()
         #Creating materials
         #TODO : Not only IDs, also Types
-        for block in self.blocks:
-            mat = self.__CreateBlockMaterial(BlockID = block.getBlockId()) 
+        for block in self.blocksInfo:
+            mat = self.__CreateBlockMaterial(BlockID = self.blocksInfo[block].getBlockId()) 
             if mat is not None:
-                self.blockMaterials[block.getBlockId()] = mat
+                self.blockMaterials[self.blocksInfo[block].getBlockId()] = mat
         
+        #Little Fix, I dont want to replace everywhere :p
+        blocks = self.blocks
         #We strip out ocluded cubes
         for i in range(1,xSize-1):
             for j in range (1,ySize-1):
                 for k in range(1,zSize-1):
-                    if ((blocks.getBlock(i -1, j, k).getId() != 0) and (blocks.getBlock(i + 1, j, k).getId() != 0):
-                        if (blocks.getBlock(i , j -1, k).getId() != 0) and (blocks.getBlock(i , j +1, k).getId() != 0) :
-                            if (blocks.getBlock(i, j, k -1).getId() != 0) and (blocks.getBlock(i, j, k +1).getId() != 0)):
-                                blocksCulled.getBlock(i,j,k).setID(0)
+                    if blocks.hasBlock(i -1, j, k) and blocks.hasBlock(i + 1, j, k):
+                        if blocks.hasBlock(i , j -1, k) and blocks.hasBlock(i , j +1, k) :
+                            if blocks.hasBlock(i, j, k -1) and blocks.hasBlock(i, j, k +1):
+                                blocksCulled.removeBlock(i,j,k)
                         
         #cube generation (takes lot of time if more than 15*15*15)    
         for i in range(0,xSize):
             for j in range (0,ySize):
                 for k in range(0,zSize):
-                    if (blocksCulled.getBlock(i,j,k).getId() != 0):
+                    if blocksCulled.hasBlock(i,j,k):
                         bpy.ops.mesh.primitive_plane_add(location = (i,j,k))
                         ##
                         bpy.context.active_object.scale.x = 0.5
@@ -64,15 +68,15 @@ class WorldBuilder:
     
     def __CreateBlockMaterial(self, BlockID, BlockType = None):
         if BlockType is not None:
-            if bpy.data.materials['block' + str(BlockID) + str(BlockType)] is None
-                material = bpy.data.materials.new(name='block' + str(BlockID) + str(BlockType))
-            else
-                return None
+            try:
+                material = bpy.data.materials['block' + "%0.4d" % BlockID  + "%0.2d" % BlockType]
+            except:
+                material = bpy.data.materials.new(name='block' + "%0.4d" % BlockID  + "%0.2d" % BlockType)
         else:
-            if bpy.data.materials['block' + str(BlockID)] is None
-                material = bpy.data.materials.new(name='block' + str(BlockID))
-            else
-                return None
+            try:
+                material = bpy.data.materials['block' + + "%0.4d" % BlockID]
+            except:
+                material = bpy.data.materials.new(name='block' + "%0.4d" % BlockID)
         #bpy.ops.object.material_slot_remove()
         slot = material.texture_slots.add()
         slot.texture = self.texture

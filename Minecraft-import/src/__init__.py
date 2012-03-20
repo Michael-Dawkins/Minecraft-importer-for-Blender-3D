@@ -2,7 +2,6 @@ import bpy
 import bpy.utils
 import os
 import sys
-from MCImportBlockInfo import *
 
 #Fix definitely the problem with the path for the packages
 script_path = bpy.utils.script_paths()
@@ -18,10 +17,13 @@ from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
 import MCImportTextureBlock
 import BlocksInfo
 from WorldBuilder import WorldBuilder
+from MCImportBlockInfo import *
 
 #global paths
-path_texture_pack = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\terrain.png"
-path_xml = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\blockscollection.xml"
+#path_texture_pack = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\terrain.png"
+path_texture_pack = "/Volumes/Data/cyr62110/Documents/Python Projects/mcimport/test/terrain.png"
+#path_xml = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\workspaces\\Minecraft-import\\Minecraft-import\\src\\blockscollection.xml"
+path_xml = "/Volumes/Data/cyr62110/Documents/Python Projects/mcimport/test/test_blockscollection.xml"
 
 bl_info = {
     "name": "Minecraft Chunk Format",
