@@ -1,11 +1,20 @@
-import sys
-sys.path.append(r'/Applications/Blender/blender.app/Contents/MacOs/2.60/scripts/addons/mcimport')
-
 import bpy
-from bpy_extras.io_utils import (ImportHelper)
 import bpy.utils
+import os
+import sys
+
+#Fix definitely the problem with the path for the packages
+script_path = bpy.utils.script_paths()
+for p in script_path:
+    addons_path = os.path.join(p,"addons")
+    mcipath = os.path.join(addons_path,"mcimport")
+    if os.path.exists(mcipath):
+        sys.path += [mcipath]
+
+from bpy_extras.io_utils import (ImportHelper)
 from bpy.props import (StringProperty, BoolProperty, IntProperty, EnumProperty)
 from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
+import MCImportTextureBlock
 import BlocksInfo
 from WorldBuilder import WorldBuilder
 
@@ -16,7 +25,7 @@ path_xml = "C:\\Users\\mike\\Documents\\Blender\\python-dev\\pydev-blender\\work
 bl_info = {
     "name": "Minecraft Chunk Format",
     "author": "Michael Dawkins, Cyril Vlaminck",
-    "version": (0, 1, 1),
+    "version": (0, 2, 0),
     "blender": (2, 5, 7),
     "api": 35622,
     "location": "File > Import-Export",
@@ -117,11 +126,18 @@ def mcimport_menu_item(self,context):
 def register():
     bpy.utils.register_module(__name__)
     bpy.types.INFO_MT_file_import.append(mcimport_menu_item)
+    
+    #Register some other tools for MCImport
+    MCImportTextureBlock.register()
+    
 
 ##Supprime notre module de la liste des operateurs
 def unregister():
     bpy.types.INFO_MT_file_import.remove(mcimport_menu_item)
     bpy.utils.unregister_module(__name__)
+    
+    #Unregister some other tools for MCImport
+    MCImportTextureBlock.unregister()
 
 #Patch correctif present pour la forme
 if __name__ == "__main__":
