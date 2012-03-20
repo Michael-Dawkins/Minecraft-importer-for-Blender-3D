@@ -7,4 +7,8 @@
 <pydev_pathproperty name="org.python.pydev.PROJECT_SOURCE_PATH">
 <path>/Minecraft-import/src</path>
 </pydev_pathproperty>
+<pydev_pathproperty name="org.python.pydev.PROJECT_EXTERNAL_SOURCE_PATH">
+<path>C:\Program Files (x86)\Blender Foundation\Blender\doc\python_api\pypredef</path>
+<path>C:\Program Files (x86)\Blender Foundation\Blender\2.61\scripts\modules</path>
+</pydev_pathproperty>
 </pydev_project>
