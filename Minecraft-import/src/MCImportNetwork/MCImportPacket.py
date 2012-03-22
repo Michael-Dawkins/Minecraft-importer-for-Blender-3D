@@ -43,34 +43,86 @@ class MCImportPacket(object):
     def writeContentOnObjectStream(self,os):
         return False
     
-class MCImportHandshake(MCImportPacket):
+class MCImportLogin(MCImportPacket):
     
-    needAuthentification = False
-    connectionHash = ""
-    username = ""
-    host = ""
+    def __init__(self):
+        MCImportPacket.__init__(self,PACKET_LOGIN)
+        return
     
+    def setUsername(self,un):
+        self.username = un
+        
+    def setProtocolVersion(self,pv):
+        self.protocolVersion = pv
+        
+    def getPlayerEntityId(self):
+        return self.playerEntityId
+    
+    def getLevelType(self):
+        return self.levelType
+    
+    def getServerMode(self):
+        return self.serverMode
+    
+    def getDimension(self):
+        return self.dimension
+    
+    def getDifficulty(self):
+        return self.difficulty
+    
+    def getMaxPlayers(self):
+        return self.maxPlayers
+    
+    def readContentFromObjectStream(self,os):
+        self.playerEntityId = os.readInt()
+        unused = os.readString()
+        self.levelType = os.readString()
+        self.serverMode = os.readInt()
+        self.dimension = os.readInt()
+        self.difficulty = os.readByte()
+        unused = self.readByte()
+        self.maxPlayers = self.readByte()
+        return False
+    
+    def writeContentOnObjectStream(self,os):
+        os.writeInt(self.protocolVersion)
+        os.writeString(self.username)
+        os.writeString("")
+        os.writeInt(0)
+        os.writeInt(0)
+        os.writeByte(0)
+        os.writeByte(0)
+        os.writeByte(0)
+        return True
+    
+class MCImportHandshake(MCImportPacket):    
     def __init__(self):
         MCImportPacket.__init__(self,PACKET_HANDSHAKE)
         return
     
     def setUsername(self, us):
-        self.username = us
+        self.__username = us
         
     def setHost(self,serverIp,serverPort):
-        self.host = serverIp + ":" + serverPort
+        self.__host = serverIp + ":" + str(serverPort)
+        
+    def needAuthentification(self):
+        return self.__needAuthentification
+    
+    def getServerHash(self):
+        return self.__serverHash
     
     def readContentFromObjectStream(self,os):
         result = os.readString()
         if result == "+":
-            self.needAuthentification = False
+            self.__needAuthentification = False
         else:
-            self.needAuthentification = True
-            self.connectionHash = result
+            self.__needAuthentification = True
+            self.__serverHash = result
         return False
     
     def writeContentOnObjectStream(self,os):
-        os.writeString(self.username + ";" + self.host)
+        os.writeString(self.__username + ";" + self.__host)
         return True
     
 class MCImportPing(MCImportPacket):

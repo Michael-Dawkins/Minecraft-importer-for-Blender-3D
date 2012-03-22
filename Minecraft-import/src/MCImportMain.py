@@ -3,6 +3,7 @@ from MCImportMap.MCImportAnvilRegion import MCImportAnvilRegion
 from MCImportNetwork.MCImportServer import MCImportServer
 from MCImportBlocks import MCImportBlockCollection, MCImportBlock
 from MCImportBlockInfo import MCImportBlockInfoCollectionXMLReader
+import readline
 
 def main():
     
@@ -55,7 +56,11 @@ def main():
     
     #Code d'example pour utiliser un serveur minecraft 1.2
     server = MCImportServer("127.0.0.1",25565)
+    server.setProtocolVersion(28)
     server.start()
+    
+    input("Test:")
+    print("Finished")
     return {"FINISHED"} 
 
 main()

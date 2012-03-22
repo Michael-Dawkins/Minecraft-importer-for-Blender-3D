@@ -44,6 +44,6 @@ class MCImportObjectStream(object):
         return True
     
     def writeString(self,value):
-        fValue = pack("!hs",len(value),value)
+        fValue = pack("!hs",len(value),bytes(value,'utf_16be'))
         self.currentSocket.send(fValue)
         return True

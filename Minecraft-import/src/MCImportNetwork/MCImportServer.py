@@ -1,7 +1,9 @@
 import socket
+import sys
 from MCImportNetwork.MCImportObjectStream import MCImportObjectStream
 from MCImportNetwork.MCImportPacket import *
 from threading import Thread,Lock
+from MCImportNetwork.MCImportProtocol import MCImportProtocol28
 
 SERVER_STATUS_NOT_CONNECTED = 0
 SERVER_STATUS_HANDSHAKE = 1
@@ -13,65 +15,72 @@ PACKET_PRIORITY_HIGHT = 0
 PACKET_PRIORITY_STANDART = 1
 
 class MCImportPacketStack(object):
-    #List containing received Packets from the server that can be handled with no time restriction
-    receivedPacketPriorityStandart = None
-    #List of packets to handle before all the other
-    receivedPacketPriorityHight = None
-    
-    lockPriorityStandart = None
-    lockPriorityHight = None
     
     def __init__(self):
-        self.lockPriorityStandart = Lock()
-        self.lockPriorityHight = Lock()
-        self.receivedPacketPriorityHight = list()
-        self.receivedPacketPriorityHight = list()
+        self.__lock = Lock()
+        self.__receivedPacketPriorityStandart = list()
+        self.__receivedPacketPriorityHight = list()
         return
     
     def pop(self):
         oResult = None
-        if len(self.receivedPacketPriorityHight) != 0:
-            self.lockPriorityHight.acquire()
-            oResult = self.receivedPacketPriorityHight.pop()
-            self.lockPriorityHight.release()
-        else:
-            self.lockPriorityStandart.acquire()
-            oResult = self.receivedPacketPriorityStandart.pop()
-            self.lockPriorityStandart.release()
+        self.__lock.acquire()
+        if len(self.__receivedPacketPriorityHight) != 0:
+            oResult = self.__receivedPacketPriorityHight.pop()
+        elif len(self.__receivedPacketPriorityStandart) != 0:
+            oResult = self.__receivedPacketPriorityStandart.pop()
+        self.__lock.release()
         return oResult
     
     def push(self,obj,priority=PACKET_PRIORITY_STANDART):
+        self.__lock.acquire()
         if priority == 0:
-            self.lockPriorityHight.acquire()
-            self.receivedPacketPriorityHight.append(obj)
-            self.lockPriorityHight.release()
+            self.__receivedPacketPriorityHight.append(obj)
         else:
-            self.lockPriorityStandart.acquire()
-            self.receivedPacketPriorityStandart.append(obj)
-            self.lockPriorityStandart.release()
+            self.__receivedPacketPriorityStandart.append(obj)
+        self.__lock.release()
+
+class MCImportWorkerProcess(Thread):
+    def __init__(self,server,packetStack):
+        Thread.__init__(self)
+        self.__server = server
+        self.__packetStack = packetStack
+    
+    def run(self):
+        if self.__packetStack is None:
+            raise Exception("The stack must be initialized before starting using this thread")
+        
+        #TODO
+        while True:
+            nextPacket = self.__packetStack.pop()
+            if nextPacket is None:
+                continue
+            else:
+                print("@Worker : " + str(nextPacket.getPacketType()))
+                print("@Worker : Start processing")
+                self.__server._getProtocol().processPacket(nextPacket)
+                print("@Worker : Stop processing")
+        return
 
 class MCImportListenningProcess(Thread):
-    packetStack = None
-    serverSocket = None
         
-    def __init__(self,serverSocket,packetStack):
-        Thread.__init__()
-        self.packetStack = packetStack
-        self.serverSocket = serverSocket
+    def __init__(self,server,packetStack):
+        Thread.__init__(self)
+        self.__packetStack = packetStack
+        self.__server = server
         
     def run(self):
-        if self.packetStack is None or self.serverSocket is None:
-            raise Exception("The socket or the stack must be initialized before starting using this thread")
-        try:
-            os = MCImportObjectStream(self.serverSocket)
-            packet = MCImportPacket.readFromObjectStream(os)
-            #TODO
-            print(packet.getPacketType())
-        except socket.error as io:
-            print(io) #debug
-            return
-        return
-    
+        if self.__packetStack is None or self.__server is None:
+            raise Exception("The server and the stack must be initialized before starting using this thread")
+        while True:
+            packet = self.__server._recv()
+            if packet is None:
+                break
+            print("@Listenning - Received : " + str(packet.getPacketType())) #DEBUG
+            #Add the new packet in the stack
+            self.__packetStack.push(packet)
+            #TODO Take care of the priority
+
 
 class MCImportServer(object):
     
@@ -105,57 +114,99 @@ class MCImportServer(object):
     receivedPacketPriorityHight = None
     
     
-    def __init__(self, serverIp, serverPort):
-        self.serverIpAddress = serverIp
-        self.serverPort = serverPort
+    def __init__(self, serverIp, serverPort = 25565):
+        self.__serverIpAddress = serverIp
+        self.__serverPort = serverPort
+        self.__serverSocket = None
+        self.__serverStream = None
+        self.__isConnected = False
+        self.__protocol = None #Link to the current protocol implementation ( According the design pattern Implementation )
         return
     
-    def setLogin(self,username,password):
-        return
+    def setProtocolVersion(self, pv):
+        if pv == 28:
+            self.__protocol = MCImportProtocol28(self)
+        else:
+            raise Exception("Unsupported protocol version specified.")
+        
+    def _getProtocol(self):
+        return self.__protocol
+    
+    def getUrl(self):
+        return "%s:%d" % (self.__serverIpAddress, self.__serverPort)
+    
+    def getServerIp(self):
+        return self.__serverIpAddress
+    
+    def getServerPort(self):
+        return self.__serverPort
+    
+    def _send(self,packet):
+        if self.__serverSocket is None or not self.__isConnected or self.__serverStream is None:
+            return False
+        #try:
+        packet.writeOnObjectStream(self.__serverStream)
+        return True
+        #except:
+        #    print("@Server : Sending socket closed")
+        #    self.__isConnected = False
+        #    self._close()
+        #    return False
+        
+    def _recv(self):
+        if self.__serverSocket is None or not self.__isConnected or self.__serverStream is None:
+            return None
+        try:
+            packet = MCImportPacket.readFromObjectStream(self.__serverStream)
+            return packet
+        except:
+            print("@Server : Receiving socket closed ")
+            self.__isConnected = False
+            self._close()
+            return None
+    
+    def isConnected(self):
+        return self.__isConnected
     
     #Start all the procedure to connect to this server
     def start(self):
+        #Verify that we have a specified version of the protocol to communicate with the server
+        if self.__protocol is None:
+            return False
         
         #Connect to the minecraft server
         if not self._connectToIPV4(self.serverIpAddress,self.serverPort):
             return False
         
-        #Start the listenning thread
-        self.serverListenningThread = Thread(target=self)
-        self.serverListenningThread.start()
+        #Create the poll for the incoming packets
+        self.serverPacketStack = MCImportPacketStack()
         
-        #DEBUG: Test
-        try:
-            #Send a ping querry
-            pingPacket = MCImportPing()
-            os = MCImportObjectStream(self.serverSocket)
-            pingPacket.writeOnObjectStream(os)
-        except socket.error as se:
-            return None
+        #Start the listenning thread
+        self.serverListenningProcess = MCImportListenningProcess(self, self.serverPacketStack)
+        self.serverListenningProcess.start()
         
         #Start the worker thread
-        self.serverListenningThread = Thread(target=self)
-        self.serverListenningThread.start()
+        self.serverWorkerProcess = MCImportWorkerProcess(self, self.serverPacketStack)
+        self.serverWorkerProcess.start()
+        
+        #Launch the authentication process
+        self.__protocol.authenticate()
         
         return
     
     def ping(self):
-        
         if self._connectToIPV4(self.serverIpAddress, self.serverPort) == False :
             return None
         pingPacket = MCImportPing()
-        message = ""
         
-        try:
-            #Send a ping querry
-            os = MCImportObjectStream(self.serverSocket)
-            pingPacket.writeOnObjectStream(os)
-            
-            #And wait the kick
-            kickPacket = MCImportPacket.readFromObjectStream(os)
-            message = kickPacket.getMessage()
-        except socket.error as se:
+        if not self._send(pingPacket):
             return None
+        
+        kickPacket = self._recv()
+        if kickPacket is None:
+            return None
+        
+        message = kickPacket.getMessage()
         
         if message is None:
             return None
@@ -168,18 +219,20 @@ class MCImportServer(object):
         self._close()
         return self.serverName
     
-    #Fonction pour obtenir des infos sur le serveur
-        
-    #Fonctions pour le controle de la connexion
-    
     def _close(self):
-        if not self.serverSocket is None:
-            return
-        try:
-            self.serverSocket.close()
-        except socket.error as se:
-            print(se) #Debug
-            return
+        #If we are no more connected to the server, we clean all ressources used
+        #Else we closed the socket then we clean all ressouces used
+        if not self.__isConnected:
+            self.__serverSocket = None
+            self.__serverStream = None
+        else:
+            try:
+                self.__serverSocket.close()
+                self.__serverSocket = None
+                self.__serverStream = None
+                self.__isConnected = False
+            except socket.error as se:
+                return
     
     def _connectToIPV6(self, serverIp, serverPort):
         return False
@@ -189,18 +242,20 @@ class MCImportServer(object):
         
         #Si on n'as pas une ip, on essaye de recuperer une ip
         try:
-            self.serverIpAddress = socket.gethostbyname(self.serverIpAddress)
+            self.__serverIpAddress = socket.gethostbyname(self.serverIpAddress)
         except socket.error as se:
             print(se) #TODO debug
             return False
         
         #On creer le socket pour communiquer avec le serveur
-        self.serverSocket = socket.socket(af,socket.SOCK_STREAM,0)
+        self.__serverSocket = socket.socket(af,socket.SOCK_STREAM,0)
         #On bind notre socket avec un port quelconque sur notre machine
-        self.serverSocket.bind(("0.0.0.0", 0))
+        self.__serverSocket.bind(("0.0.0.0", 0))
         #Puis on fait une tentative de connexion
         try:
-            self.serverSocket.connect((self.serverIpAddress,self.serverPort))
+            self.__serverSocket.connect((self.__serverIpAddress,self.__serverPort))
+            self.__serverStream = MCImportObjectStream(self.__serverSocket)
+            self.__isConnected = True
         except socket.error as se:
             print(se) #TODO debug
             return False
