@@ -26,9 +26,9 @@ class MCImportPacketStack(object):
         oResult = None
         self.__lock.acquire()
         if len(self.__receivedPacketPriorityHight) != 0:
-            oResult = self.__receivedPacketPriorityHight.pop()
+            oResult = self.__receivedPacketPriorityHight.pop(0)
         elif len(self.__receivedPacketPriorityStandart) != 0:
-            oResult = self.__receivedPacketPriorityStandart.pop()
+            oResult = self.__receivedPacketPriorityStandart.pop(0)
         self.__lock.release()
         return oResult
     
@@ -41,6 +41,9 @@ class MCImportPacketStack(object):
         self.__lock.release()
 
 class MCImportWorkerProcess(Thread):
+    
+    debug = True
+    
     def __init__(self,server,packetStack):
         Thread.__init__(self)
         self.__server = server
@@ -56,10 +59,9 @@ class MCImportWorkerProcess(Thread):
             if nextPacket is None:
                 continue
             else:
-                print("@Worker : " + str(nextPacket.getPacketType()))
-                print("@Worker : Start processing")
+                if MCImportWorkerProcess.debug:
+                    print("@Worker : Processing packet ( type : %x )" % nextPacket.getPacketType())
                 self.__server._getProtocol().processPacket(nextPacket)
-                print("@Worker : Stop processing")
         return
 
 class MCImportListenningProcess(Thread):
@@ -115,6 +117,10 @@ class MCImportServer(object):
     
     
     def __init__(self, serverIp, serverPort = 25565):
+        #Informations about the world
+        
+        
+        #Information about the server
         self.__serverIpAddress = serverIp
         self.__serverPort = serverPort
         self.__serverSocket = None
@@ -144,14 +150,14 @@ class MCImportServer(object):
     def _send(self,packet):
         if self.__serverSocket is None or not self.__isConnected or self.__serverStream is None:
             return False
-        #try:
-        packet.writeOnObjectStream(self.__serverStream)
-        return True
-        #except:
-        #    print("@Server : Sending socket closed")
-        #    self.__isConnected = False
-        #    self._close()
-        #    return False
+        try:
+            packet.writeOnObjectStream(self.__serverStream)
+            return True
+        except Exception as ex:
+            print("@Server : Sending socket closed ( error : %s )" % str(ex))
+            self.__isConnected = False
+            self._close()
+            return False
         
     def _recv(self):
         if self.__serverSocket is None or not self.__isConnected or self.__serverStream is None:
@@ -159,8 +165,8 @@ class MCImportServer(object):
         try:
             packet = MCImportPacket.readFromObjectStream(self.__serverStream)
             return packet
-        except:
-            print("@Server : Receiving socket closed ")
+        except Exception as ex:
+            print("@Server : Receiving socket closed ( error : %s )" % str(ex))
             self.__isConnected = False
             self._close()
             return None
@@ -222,17 +228,15 @@ class MCImportServer(object):
     def _close(self):
         #If we are no more connected to the server, we clean all ressources used
         #Else we closed the socket then we clean all ressouces used
-        if not self.__isConnected:
-            self.__serverSocket = None
-            self.__serverStream = None
-        else:
-            try:
-                self.__serverSocket.close()
-                self.__serverSocket = None
-                self.__serverStream = None
-                self.__isConnected = False
-            except socket.error as se:
-                return
+        try:
+            self.__serverSocket.close()
+        except Exception as ex:
+            print("@Server : Close socket failed ( error : %d )" % str(ex))
+
+        self.__serverSocket = None
+        self.__serverStream = None
+        self.__isConnected = False
+            
     
     def _connectToIPV6(self, serverIp, serverPort):
         return False

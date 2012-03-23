@@ -1,6 +1,9 @@
 PACKET_KEEP_ALIVE=0
 PACKET_LOGIN=0x01
 PACKET_HANDSHAKE=0x02
+PACKET_TIME_UPDATE = 0x04
+PACKET_SPAWN=0X06
+PACKET_SPAWN_MOB = 0x18
 PACKET_PING = 0xFE
 PACKET_KICK = 0xFF
 
@@ -15,15 +18,31 @@ class MCImportPacket(object):
     def getPacketType(self):
         return self.packetType
     
+    #Create a class variable to store the dictionary ( keep just one instance )
+    packetTypes = None
+    
+    #Create a dictionary to have the same behavior as the switch instruction in other languaae
+    @staticmethod
+    def _init():
+        MCImportPacket.packetTypes = {
+        PACKET_LOGIN:MCImportLogin,
+        PACKET_HANDSHAKE:MCImportHandshake,
+        PACKET_LOGIN:MCImportLogin,
+        PACKET_TIME_UPDATE:MCImportTimeUpdate,
+        PACKET_SPAWN:MCImportSpawn,
+        PACKET_SPAWN_MOB:MCImportSpawn,
+        PACKET_KICK:MCImportKick
+        }
+    
     @staticmethod
     def instanciatePacket(packetType):
+        if MCImportPacket.packetTypes is None:
+            MCImportPacket._init()
         packet = None
-        if packetType == PACKET_HANDSHAKE:
-            packet = MCImportHandshake()
-        if packetType == PACKET_KICK :
-            packet = MCImportKick()
-        else:
-            raise Exception("Unsupported packet type : " + str(packetType))
+        try:
+            packet = MCImportPacket.packetTypes[packetType]()
+        except:
+            raise Exception("Unsupported packet type : %x" % (packetType))
         return packet
     
     @staticmethod
@@ -80,8 +99,8 @@ class MCImportLogin(MCImportPacket):
         self.serverMode = os.readInt()
         self.dimension = os.readInt()
         self.difficulty = os.readByte()
-        unused = self.readByte()
-        self.maxPlayers = self.readByte()
+        unused = os.readByte()
+        self.maxPlayers = os.readByte()
         return False
     
     def writeContentOnObjectStream(self,os):
@@ -93,9 +112,9 @@ class MCImportLogin(MCImportPacket):
         os.writeByte(0)
         os.writeByte(0)
         os.writeByte(0)
-        return True
-    
-class MCImportHandshake(MCImportPacket):    
+        return True  
+
+class MCImportHandshake(MCImportPacket):
     def __init__(self):
         MCImportPacket.__init__(self,PACKET_HANDSHAKE)
         return
@@ -114,7 +133,7 @@ class MCImportHandshake(MCImportPacket):
     
     def readContentFromObjectStream(self,os):
         result = os.readString()
-        if result == "+":
+        if result[0] == '-':
             self.__needAuthentification = False
         else:
             self.__needAuthentification = True
@@ -124,6 +143,63 @@ class MCImportHandshake(MCImportPacket):
     def writeContentOnObjectStream(self,os):
         os.writeString(self.__username + ";" + self.__host)
         return True
+    
+class MCImportTimeUpdate(MCImportPacket):
+    def __init__(self):
+        MCImportPacket.__init__(self,PACKET_TIME_UPDATE)
+        self.__time = 0
+        return
+    
+    def getTime(self):
+        return self.__time
+    
+    def readContentFromObjectStream(self,os):
+        self.__time = os.readLong()
+        return True
+    
+    def writeOnObjectStream(self,os):
+        raise Exception("This packet is only server->client")
+    
+class MCImportSpawn(MCImportPacket):
+    def __init__(self):
+        MCImportPacket.__init__(self,PACKET_SPAWN)
+        self.__x = 0
+        self.__y = 0
+        self.__z = 0
+        return
+    
+    def getPosition(self):
+        return (self.__x, self.__y, self.__z)
+    
+    def readContentFromObjectStream(self,os):
+        self.__x = os.readInt()
+        self.__y = os.readInt()
+        self.__z = os.readInt()
+    
+    def writeOnObjectStream(self,os):
+        raise Exception("This packet is only server->client")
+    
+class MCImportMobSpawn(MCImportPacket):
+    def __init__(self):
+        MCImportPacket.__init__(self,PACKET_SPAWN)
+        self.__eid = 0
+        self.__type = 0
+        self.__x = 0
+        self.__y = 0
+        self.__z = 0
+        self.__yaw = 0
+        self.__pitch = 0
+        self.__headYaw = 0
+        self.__metadata = None
+        return
+    
+    def readContentFromObjectStream(self,os):
+        self.__x = os.readInt()
+        self.__y = os.readInt()
+        self.__z = os.readInt()
+    
+    def writeOnObjectStream(self,os):
+        raise Exception("This packet is only server->client")
     
 class MCImportPing(MCImportPacket):
     

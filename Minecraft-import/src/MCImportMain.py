@@ -24,6 +24,7 @@ def main():
     chunk = map.getChunk(4,3)
     map.closeMCRegion()
     blocks = chunk.getBlocks()
+    
     block = blocks.getBlock(X, Y, Z)
     #Par exemple affiche le bloc
     print("BlockId : " + str(block.getId()) + "\nData : " + str(block.getData()) + "\n")
